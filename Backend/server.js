@@ -41,6 +41,14 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../Frontend/index.html'));
+});
+
+app.get('/index.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../Frontend/index.html'));
+});
+
 app.post('/api/register', (req, res) => {
   const { name, email, password } = req.body;
 
