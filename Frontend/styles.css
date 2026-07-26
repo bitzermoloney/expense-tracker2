@@ -1,0 +1,91 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #f3f7ff 0%, #eef9f1 100%);
+  color: #11263d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.page-shell {
+  width: min(100%, 460px);
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 1.2rem;
+  box-shadow: 0 20px 60px rgba(10, 38, 71, 0.16);
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+}
+
+.subtitle {
+  margin-top: 0;
+  color: #58708b;
+}
+
+.mode-switch {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.mode-btn,
+.submit-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mode-btn {
+  background: #e8eef8;
+  color: #22405f;
+}
+
+.mode-btn.active {
+  background: #1d6df2;
+  color: white;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.9rem;
+}
+
+input {
+  border: 1px solid #d0dce8;
+  border-radius: 0.7rem;
+  padding: 0.8rem 0.9rem;
+  font-size: 1rem;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 0.4rem;
+  background: #17a34a;
+  color: white;
+}
+
+.message {
+  min-height: 1.3rem;
+  margin-top: 0.95rem;
+  color: #0d6b2d;
+  font-weight: 600;
+}

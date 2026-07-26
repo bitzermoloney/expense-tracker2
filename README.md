@@ -11,3 +11,13 @@ To begin, I thought about what I wanted my program to be able to do:
 I also thought about some extra things that I could add to make the program even better afterwards:
 - The ability for the user to download PDF statements of their expenses
 
+# STEP 1: SETTING UP A LOGIN AND REGISTER SYSTEM
+To set up a login and register system, I would need to:
+- Set up a backend API
+- Create a frontend UI
+- Create the login and register system
+
+The backend API is seen in server.js, which I wrote in javascript. It has been annotated.
+
+The frontend UI is seen in index.html and app.js. I chose to use HTML because it is standard for creating UIs, and used javascript because it complements the functionality of HTML code well. Before this project I was already pretty good at HTML, but have had to expand my skills in javascript which I had rarely used before.
+

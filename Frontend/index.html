@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker Auth</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="auth-card">
+        <h1>Expense Tracker</h1>
+        <p class="subtitle">Create an account or sign in to continue.</p>
+
+        <div class="mode-switch" role="tablist" aria-label="Authentication mode">
+          <button class="mode-btn active" data-mode="login" type="button">Login</button>
+          <button class="mode-btn" data-mode="register" type="button">Register</button>
+        </div>
+
+        <form id="authForm">
+          <label class="field" for="nameInput">
+            <span>Name</span>
+            <input id="nameInput" name="name" type="text" placeholder="Your name" />
+          </label>
+
+          <label class="field" for="emailInput">
+            <span>Email</span>
+            <input id="emailInput" name="email" type="email" placeholder="you@example.com" required />
+          </label>
+
+          <label class="field" for="passwordInput">
+            <span>Password</span>
+            <input id="passwordInput" name="password" type="password" placeholder="Choose a password" required />
+          </label>
+
+          <button id="submitButton" class="submit-btn" type="submit">Login</button>
+        </form>
+
+        <p id="message" class="message" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

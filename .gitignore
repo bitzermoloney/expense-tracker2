@@ -1,0 +1,4 @@
+node_modules/
+Backend/expense-tracker.db
+Backend/.DS_Store
+Frontend/.DS_Store
