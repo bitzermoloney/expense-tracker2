@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Expense Tracker Auth</title>
+    <title>Expense Tracker</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main class="page-shell">
-      <section class="auth-card">
+      <section id="authSection" class="card auth-card">
         <h1>Expense Tracker</h1>
         <p class="subtitle">Create an account or sign in to continue.</p>
 
@@ -37,7 +37,76 @@
         </form>
 
         <p id="message" class="message" aria-live="polite"></p>
-        <p class="hint">This GitHub Pages version stores accounts locally in your browser.</p>
+        <p class="hint">This GitHub Pages version stores your data locally in your browser.</p>
+      </section>
+
+      <section id="expensesSection" class="card expenses-card hidden">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Dashboard</p>
+            <h2>Your expenses</h2>
+          </div>
+          <button id="logoutButton" class="ghost-btn" type="button">Logout</button>
+        </div>
+
+        <div class="summary-panel">
+          <div>
+            <p class="eyebrow">Total spent</p>
+            <p id="totalSpend" class="summary-value">$0.00</p>
+          </div>
+          <div>
+            <p class="eyebrow">Active user</p>
+            <p id="currentUserLabel" class="summary-value">-</p>
+          </div>
+        </div>
+
+        <form id="expenseForm" class="expense-form">
+          <div class="form-row">
+            <label class="field">
+              <span>Description</span>
+              <input id="expenseDescription" name="description" type="text" placeholder="Coffee, rent, train ticket..." required />
+            </label>
+            <label class="field">
+              <span>Amount</span>
+              <input id="expenseAmount" name="amount" type="number" min="0" step="0.01" placeholder="0.00" required />
+            </label>
+            <label class="field">
+              <span>Date</span>
+              <input id="expenseDate" name="date" type="date" required />
+            </label>
+          </div>
+
+          <div class="form-row form-row-secondary">
+            <label class="field">
+              <span>Category</span>
+              <select id="expenseCategory" name="category">
+                <option value="Food">Food</option>
+                <option value="Travel">Travel</option>
+                <option value="Bills">Bills</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Other">Other</option>
+              </select>
+            </label>
+            <button id="expenseSubmitButton" class="submit-btn" type="submit">Add expense</button>
+          </div>
+        </form>
+
+        <p id="expenseMessage" class="message" aria-live="polite"></p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="expenseTableBody"></tbody>
+          </table>
+        </div>
       </section>
     </main>
 

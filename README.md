@@ -22,3 +22,7 @@ The backend API is seen in server.js, which I wrote in javascript. It has been a
 The frontend UI is seen in index.html and app.js. I chose to use HTML because it is standard for creating UIs, and used javascript because it complements the functionality of HTML code well. Before this project I was already pretty good at HTML, but have had to expand my skills in javascript which I had rarely used before.
 
 I was also able to show off some SQL skills in server.js, which is used for handling, searching from and writing to the database being used.
+
+# STEP 2: ADDING THE EXPENSE EDIT PAGE
+Next I added the page where the user can edit their expenses, in the app.js file and html file.
+
