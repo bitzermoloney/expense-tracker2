@@ -60,6 +60,27 @@
           </div>
         </div>
 
+        <section class="dashboard-panel" aria-label="Monthly spending dashboard">
+          <div class="dashboard-header">
+            <div>
+              <p class="eyebrow">Dashboard</p>
+              <h3>Monthly insights</h3>
+            </div>
+            <p class="subtitle">See your spending trend and monthly expense details in one place.</p>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="chart-card">
+              <h4>Spending by month</h4>
+              <svg id="monthlyChart" class="monthly-chart" viewBox="0 0 320 160" role="img" aria-label="Monthly spending chart"></svg>
+            </div>
+            <div class="chart-card">
+              <h4>Expenses by month</h4>
+              <div id="monthlyBreakdown" class="monthly-breakdown"></div>
+            </div>
+          </div>
+        </section>
+
         <form id="expenseForm" class="expense-form">
           <div class="form-row">
             <label class="field">

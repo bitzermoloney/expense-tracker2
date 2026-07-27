@@ -13,6 +13,8 @@ const expenseTableBody = document.getElementById('expenseTableBody');
 const totalSpend = document.getElementById('totalSpend');
 const currentUserLabel = document.getElementById('currentUserLabel');
 const expenseSubmitButton = document.getElementById('expenseSubmitButton');
+const monthlyChart = document.getElementById('monthlyChart');
+const monthlyBreakdown = document.getElementById('monthlyBreakdown');
 const storageKey = 'expense-tracker-users';
 const expensesStorageKey = 'expense-tracker-expenses';
 
@@ -115,10 +117,106 @@ function formatCurrency(value) {
   }).format(value);
 }
 
+function getMonthKey(dateValue) {
+  const date = new Date(`${dateValue}T00:00:00`);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function getMonthLabel(dateValue) {
+  const date = new Date(`${dateValue}T00:00:00`);
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    year: 'numeric'
+  });
+}
+
+function buildMonthlyStats(expenses) {
+  const grouped = expenses.reduce((accumulator, expense) => {
+    const monthKey = getMonthKey(expense.date);
+
+    if (!accumulator[monthKey]) {
+      accumulator[monthKey] = {
+        key: monthKey,
+        label: getMonthLabel(expense.date),
+        total: 0,
+        items: []
+      };
+    }
+
+    accumulator[monthKey].total += Number(expense.amount);
+    accumulator[monthKey].items.push(expense);
+    return accumulator;
+  }, {});
+
+  return Object.values(grouped)
+    .sort((a, b) => a.key.localeCompare(b.key))
+    .slice(-6);
+}
+
+function renderDashboard() {
+  if (!currentUser) {
+    monthlyChart.innerHTML = '';
+    monthlyBreakdown.innerHTML = '';
+    return;
+  }
+
+  const expenses = getExpensesForUser(currentUser.email);
+
+  if (!expenses.length) {
+    monthlyChart.innerHTML = '<text x="20" y="90" fill="#58708b">No expenses yet</text>';
+    monthlyBreakdown.innerHTML = '<p class="empty-state">Add your first expense to see monthly insights.</p>';
+    return;
+  }
+
+  const monthlyData = buildMonthlyStats(expenses);
+  const maxAmount = Math.max(...monthlyData.map((month) => month.total), 1);
+  const chartWidth = Math.max(320, monthlyData.length * 44 + 24);
+  const chartHeight = 160;
+  const maxBarHeight = 96;
+
+  monthlyChart.setAttribute('viewBox', `0 0 ${chartWidth} ${chartHeight}`);
+  monthlyChart.innerHTML = `
+    <rect x="0" y="0" width="${chartWidth}" height="${chartHeight}" rx="16" fill="#f7fbff"></rect>
+    <line x1="26" y1="130" x2="${chartWidth - 20}" y2="130" stroke="#dbe7f2" stroke-width="1"></line>
+    ${monthlyData.map((month, index) => {
+      const barHeight = Math.max(16, (month.total / maxAmount) * maxBarHeight);
+      const x = 30 + index * 44;
+      const y = 130 - barHeight;
+
+      return `
+        <rect x="${x}" y="${y}" width="24" height="${barHeight}" rx="8" fill="#1d6df2"></rect>
+        <text x="${x + 12}" y="147" text-anchor="middle" font-size="10" fill="#58708b">${month.label.split(' ')[0]}</text>
+        <text x="${x + 12}" y="${y - 8}" text-anchor="middle" font-size="10" fill="#11263d">${formatCurrency(month.total)}</text>
+      `;
+    }).join('')}
+  `;
+
+  monthlyBreakdown.innerHTML = monthlyData.map((month) => `
+    <div class="month-group">
+      <div class="month-group-header">
+        <strong>${month.label}</strong>
+        <span>${formatCurrency(month.total)}</span>
+      </div>
+      <ul class="month-expense-list">
+        ${month.items
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .map((expense) => `
+            <li>
+              <span>${expense.description}</span>
+              <span>${formatCurrency(Number(expense.amount))}</span>
+            </li>
+          `)
+          .join('')}
+      </ul>
+    </div>
+  `).join('');
+}
+
 function renderExpenses() {
   if (!currentUser) {
     expenseTableBody.innerHTML = '';
     totalSpend.textContent = formatCurrency(0);
+    renderDashboard();
     return;
   }
 
@@ -128,6 +226,7 @@ function renderExpenses() {
 
   if (!expenses.length) {
     expenseTableBody.innerHTML = '<tr><td colspan="5" class="empty-state">No expenses yet. Add your first one above.</td></tr>';
+    renderDashboard();
     return;
   }
 
@@ -146,6 +245,8 @@ function renderExpenses() {
       </tr>
     `)
     .join('');
+
+  renderDashboard();
 }
 
 function handleExpenseAction(event) {

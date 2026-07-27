@@ -4,7 +4,7 @@ A full stack expense tracker
 To begin, I thought about what I wanted my program to be able to do:
 - Have a login/register system
     This will need to use a database that holds the users information for when they try to log in, which may be a good opportunity to expand my file handling skills
-- Have a system whereby the user can add, delete, edit and view their expenses, putting them into catagories
+- Have a system whereby the user can add, delete, edit and view their expenses, putting them into catagories.
     This will need to use a child database for each user's expenses
 - Have a dashboard, where the user can see their expenses, charts, monthly statements and so on
 
@@ -28,3 +28,7 @@ Next I added the page where the user can edit their expenses, in the app.js file
 
 # STEP 3: DECENTRALISING
 After adding the basic functionality, I needed to make it so that the expense edit page is accessed afetr the user is logged in. To do this, I made changes to app.js and esnured the flow now opens the expense tracker after login.
+
+# STEP 4: DASHBOARD
+Next I added a dashboard. It shows spending split into months. These changes are wired into the main expense view in index.html, styled in style.css and rendered from app.js.
+
