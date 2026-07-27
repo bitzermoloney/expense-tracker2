@@ -26,3 +26,5 @@ I was also able to show off some SQL skills in server.js, which is used for hand
 # STEP 2: ADDING THE EXPENSE EDIT PAGE
 Next I added the page where the user can edit their expenses, in the app.js file and html file.
 
+# STEP 3: DECENTRALISING
+After adding the basic functionality, I needed to make it so that the expense edit page is accessed afetr the user is logged in. To do this, I made changes to app.js and esnured the flow now opens the expense tracker after login.

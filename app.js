@@ -78,6 +78,26 @@ function showAuthView() {
   authMessage.textContent = '';
 }
 
+function startEditingExistingExpense(user) {
+  const expenses = getExpensesForUser(user.email);
+
+  if (!expenses.length) {
+    expenseSubmitButton.textContent = 'Add expense';
+    expenseMessage.textContent = '';
+    return false;
+  }
+
+  const expenseToEdit = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+  editingExpenseId = expenseToEdit.id;
+  document.getElementById('expenseDescription').value = expenseToEdit.description;
+  document.getElementById('expenseAmount').value = expenseToEdit.amount;
+  document.getElementById('expenseDate').value = expenseToEdit.date;
+  document.getElementById('expenseCategory').value = expenseToEdit.category;
+  expenseSubmitButton.textContent = 'Save expense';
+  expenseMessage.textContent = 'Editing expense.';
+  return true;
+}
+
 function showExpensesView(user) {
   currentUser = user;
   authSection.classList.add('hidden');
@@ -85,6 +105,7 @@ function showExpensesView(user) {
   currentUserLabel.textContent = user.name;
   resetExpenseForm();
   renderExpenses();
+  startEditingExistingExpense(user);
 }
 
 function formatCurrency(value) {
