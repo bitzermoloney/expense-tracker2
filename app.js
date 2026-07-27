@@ -174,6 +174,116 @@ function buildMonthlyStats(expenses) {
     .slice(-6);
 }
 
+function escapePdfText(value) {
+  return String(value)
+    .replace(/\\/g, '\\\\')
+    .replace(/\(/g, '\\(')
+    .replace(/\)/g, '\\)');
+}
+
+function buildSimplePdf(lines) {
+  const pageWidth = 612;
+  const pageHeight = 792;
+  const margin = 40;
+  const lineHeight = 14;
+  const linesPerPage = 45;
+  const pagedLines = [];
+
+  for (let index = 0; index < lines.length; index += linesPerPage) {
+    pagedLines.push(lines.slice(index, index + linesPerPage));
+  }
+
+  const objects = [];
+  objects.push({
+    num: 1,
+    content: '<< /Type /Catalog /Pages 2 0 R >>'
+  });
+  objects.push({
+    num: 2,
+    content: '<< /Type /Pages /Count 0 /Kids [] >>'
+  });
+  objects.push({
+    num: 3,
+    content: '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'
+  });
+
+  const pageObjectNumbers = [];
+  const contentObjectNumbers = [];
+  let nextObjectNumber = 4;
+
+  pagedLines.forEach((pageLines) => {
+    const pageObjectNumber = nextObjectNumber++;
+    const contentObjectNumber = nextObjectNumber++;
+    pageObjectNumbers.push(pageObjectNumber);
+    contentObjectNumbers.push(contentObjectNumber);
+
+    const streamLines = pageLines.map((line, lineIndex) => {
+      const yCoordinate = pageHeight - margin - lineIndex * lineHeight;
+      return `BT /F1 12 Tf ${margin} ${yCoordinate} Td (${escapePdfText(line)}) Tj ET`;
+    }).join('\n');
+
+    const stream = `<< /Length ${streamLines.length} >>\nstream\n${streamLines}\nendstream`;
+
+    objects.push({
+      num: pageObjectNumber,
+      content: `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`
+    });
+
+    objects.push({
+      num: contentObjectNumber,
+      content: stream
+    });
+  });
+
+  objects[1].content = `<< /Type /Pages /Count ${pageObjectNumbers.length} /Kids [${pageObjectNumbers.map((number) => `${number} 0 R`).join(' ')}] >>`;
+
+  const pdfParts = ['%PDF-1.4\n'];
+  const offsets = [];
+
+  objects.forEach((objectDefinition) => {
+    offsets.push(pdfParts.join('').length);
+    pdfParts.push(`${objectDefinition.num} 0 obj\n${objectDefinition.content}\nendobj\n`);
+  });
+
+  const xrefOffset = pdfParts.join('').length;
+  pdfParts.push(`xref\n0 ${objects.length + 1}\n`);
+  pdfParts.push('0000000000 65535 f \n');
+
+  offsets.forEach((offset) => {
+    pdfParts.push(`${String(offset).padStart(10, '0')} 00000 n \n`);
+  });
+
+  pdfParts.push(`trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`);
+
+  return pdfParts.join('');
+}
+
+function downloadMonthStatement(month) {
+  const lines = [
+    `Expense Statement - ${month.label}`,
+    `Total: ${formatCurrency(month.total)}`,
+    '',
+    'Expenses:'
+  ];
+
+  month.items
+    .slice()
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .forEach((expense) => {
+      lines.push(`${expense.date} | ${expense.description} | ${expense.category} | ${formatCurrency(Number(expense.amount))}`);
+    });
+
+  const statementText = lines.join('\n');
+  const pdfBytes = buildSimplePdf(statementText.split('\n'));
+  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `expense-statement-${month.key}.pdf`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 function renderDashboard() {
   if (!currentUser) {
     monthlyChart.innerHTML = '';
@@ -216,7 +326,10 @@ function renderDashboard() {
     <div class="month-group">
       <div class="month-group-header">
         <strong>${month.label}</strong>
-        <span>${formatCurrency(month.total)}</span>
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <span>${formatCurrency(month.total)}</span>
+          <button class="download-btn" type="button" data-action="download-statement" data-month-key="${month.key}">Download PDF</button>
+        </div>
       </div>
       <ul class="month-expense-list">
         ${month.items
@@ -399,6 +512,23 @@ logoutButton.addEventListener('click', () => {
 });
 
 expenseTableBody.addEventListener('click', handleExpenseAction);
+
+monthlyBreakdown.addEventListener('click', (event) => {
+  const button = event.target.closest('button[data-action="download-statement"]');
+
+  if (!button || !currentUser) {
+    return;
+  }
+
+  const monthKey = button.dataset.monthKey;
+  const expenses = getExpensesForUser(currentUser.email);
+  const monthlyData = buildMonthlyStats(expenses);
+  const month = monthlyData.find((item) => item.key === monthKey);
+
+  if (month) {
+    downloadMonthStatement(month);
+  }
+});
 
 setMode('login');
 showAuthView();

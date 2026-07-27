@@ -32,3 +32,5 @@ After adding the basic functionality, I needed to make it so that the expense ed
 # STEP 4: DASHBOARD
 Next I added a dashboard. It shows spending split into months. These changes are wired into the main expense view in index.html, styled in style.css and rendered from app.js. In doing this, I encountered some logical errors as the program wasn't able to draw the correct data, and had to work this out as I programmed. I also added error handling to show nithing on the dashboard if these errors continue to occur, rather than an incorrect graphic.
 
+# STEP 5: PDF STATEMENTS
+Next, I stretched myself to allow the user to be able to download PDF statements of each months expenses. To do this, I added a download action beside each monthly summary, and created a browser-side PDF export, that looks professional. Changes were mainly seen in app.js. I also added a footer to tell users who created this application.
