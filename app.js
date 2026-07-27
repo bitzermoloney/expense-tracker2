@@ -22,38 +22,59 @@ let currentMode = 'login';
 let currentUser = null;
 let editingExpenseId = null;
 
+function normalizeEmail(value) {
+  return (value || '').trim().toLowerCase();
+}
+
+function normalizeUser(user) {
+  return {
+    ...user,
+    email: normalizeEmail(user.email)
+  };
+}
+
 function readUsers() {
   try {
-    return JSON.parse(localStorage.getItem(storageKey)) || [];
+    const users = JSON.parse(localStorage.getItem(storageKey)) || [];
+    return users.map(normalizeUser);
   } catch (error) {
     return [];
   }
 }
 
 function saveUsers(users) {
-  localStorage.setItem(storageKey, JSON.stringify(users));
+  localStorage.setItem(storageKey, JSON.stringify(users.map(normalizeUser)));
 }
 
 function readExpenses() {
   try {
-    return JSON.parse(localStorage.getItem(expensesStorageKey)) || {};
+    const expensesByUser = JSON.parse(localStorage.getItem(expensesStorageKey)) || {};
+    return Object.entries(expensesByUser).reduce((accumulator, [email, expenses]) => {
+      accumulator[normalizeEmail(email)] = Array.isArray(expenses) ? expenses : [];
+      return accumulator;
+    }, {});
   } catch (error) {
     return {};
   }
 }
 
 function saveExpenses(expensesByUser) {
-  localStorage.setItem(expensesStorageKey, JSON.stringify(expensesByUser));
+  const normalizedExpenses = Object.entries(expensesByUser).reduce((accumulator, [email, expenses]) => {
+    accumulator[normalizeEmail(email)] = Array.isArray(expenses) ? expenses : [];
+    return accumulator;
+  }, {});
+
+  localStorage.setItem(expensesStorageKey, JSON.stringify(normalizedExpenses));
 }
 
 function getExpensesForUser(email) {
   const expensesByUser = readExpenses();
-  return expensesByUser[email] || [];
+  return expensesByUser[normalizeEmail(email)] || [];
 }
 
 function saveExpensesForUser(email, expenses) {
   const expensesByUser = readExpenses();
-  expensesByUser[email] = expenses;
+  expensesByUser[normalizeEmail(email)] = expenses;
   saveExpenses(expensesByUser);
 }
 
@@ -290,7 +311,7 @@ modeButtons.forEach((button) => {
 authForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
-  const email = document.getElementById('emailInput').value.trim().toLowerCase();
+  const email = normalizeEmail(document.getElementById('emailInput').value);
   const password = document.getElementById('passwordInput').value;
 
   if (!email || !password) {

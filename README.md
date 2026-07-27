@@ -30,5 +30,5 @@ Next I added the page where the user can edit their expenses, in the app.js file
 After adding the basic functionality, I needed to make it so that the expense edit page is accessed afetr the user is logged in. To do this, I made changes to app.js and esnured the flow now opens the expense tracker after login.
 
 # STEP 4: DASHBOARD
-Next I added a dashboard. It shows spending split into months. These changes are wired into the main expense view in index.html, styled in style.css and rendered from app.js.
+Next I added a dashboard. It shows spending split into months. These changes are wired into the main expense view in index.html, styled in style.css and rendered from app.js. In doing this, I encountered some logical errors as the program wasn't able to draw the correct data, and had to work this out as I programmed.
 
