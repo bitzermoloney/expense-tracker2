@@ -295,7 +295,7 @@ function renderDashboard() {
 
   if (!expenses.length) {
     monthlyChart.innerHTML = '<text x="20" y="90" fill="#58708b">No expenses yet</text>';
-    monthlyBreakdown.innerHTML = '<p class="empty-state">Add your first expense to see monthly insights.</p>';
+    monthlyBreakdown.innerHTML = '<div class="month-group"><p class="empty-state">Add your first expense to see monthly insights.</p></div>';
     return;
   }
 
@@ -326,7 +326,7 @@ function renderDashboard() {
     <div class="month-group">
       <div class="month-group-header">
         <strong>${month.label}</strong>
-        <div style="display:flex; align-items:center; gap:0.5rem;">
+        <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; justify-content:flex-end;">
           <span>${formatCurrency(month.total)}</span>
           <button class="download-btn" type="button" data-action="download-statement" data-month-key="${month.key}">Download PDF</button>
         </div>
